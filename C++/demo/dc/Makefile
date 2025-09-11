@@ -19,34 +19,16 @@ SRC_FILES:=$(filter-out $(SRC_EXC_FILES), $(SRC_INC_FILES))
 
 OBJ_FILES:=$(foreach obj, $(SRC_FILES), $(OBJ_DIR)/$(obj:%.cpp=%.opp))
 
-INC_FOLDER+=$(PROJ_DIR)/../../robotun_lib/third_lib/include\
+INC_FOLDER+=$(PROJ_DIR)/../../robotun_lib/third_lib_2/include\
 
 INC:=$(foreach inc, $(INC_FOLDER), -I$(inc))
 
 .PHONY: all default clean 
 
-# LIBS+=$(PROJ_DIR)/../../robotun_lib/third_lib/lib/matplot.lib
-# LIBS+=$(PROJ_DIR)/../../robotun_lib/third_lib/lib/Matplot++/nodesoup.lib
+LIBS+=$(PROJ_DIR)/../../robotun_lib/third_lib_2/lib/libmatplot.a
 
+LIBS+=$(PROJ_DIR)/../../robotun_lib/third_lib_2/lib/Matplot++/libnodesoup.a
 
-LIB_DIR=-L$(PROJ_DIR)/../../robotun_lib/third_lib/lib/\
-	-L$(PROJ_DIR)/../../robotun_lib/third_lib/lib/Matplot++/\
-
-
-LIBS=-lnodesoup -lmatplot
-LIBS+=-lgdi32
-LIBS+=-lkernel32
-LIBS+=-luser32
-LIBS+=-lwinspool
-LIBS+=-lshell32
-LIBS+=-lole32
-LIBS+=-loleaut32
-LIBS+=-luuid
-LIBS+=-lcomdlg32
-LIBS+=-ladvapi32
-
-# Linker flags. Use -L for the directory and -l for the library name.
-LDFLAGS = $(LIB_DIR) $(LIBS)
 
 all: $(BUILD_DIR)/$(TARGET_NAME)
 	@echo "Done."
@@ -59,7 +41,7 @@ $(OBJ_DIR)/%.opp: %.cpp
 $(BUILD_DIR)/$(TARGET_NAME): $(OBJ_FILES)
 	@echo "Link $(notdir $@)"
 	@mkdir -p $(shell dirname $@)
-	@$(CPP) $(C_FLAG) $(INC) $(OBJ_FILES) $(LDFLAGS) -o $@
+	@$(CPP) $(C_FLAG) $(INC) $(OBJ_FILES) $(LIBS) -o $@
 
 clean:
 	@echo "Remove build"
