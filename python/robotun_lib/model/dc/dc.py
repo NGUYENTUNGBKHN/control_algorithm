@@ -3,7 +3,7 @@ import numpy as np
 
 from numpy.linalg import matrix_rank
 from control import ctrb, obsv
-# from ode_solver.lqr import lqr
+from robotun_lib.ctrl.lqr_ctrl.lqr_ctrl import lqr
 
 class DC():
     """
@@ -86,9 +86,9 @@ def check_ctrb_obsv(A, B, C):
     print("Observability matrix rank: %d" % matrix_rank(obsv_matrix))
 
 
-# def get_lqr_gains(A, B, Q, R):
-#     K, _, _ = lqr(A, B, Q, R)
-#     return K
+def get_lqr_gains(A, B, Q, R):
+    K, _, _ = lqr(A, B, Q, R)
+    return K
 
 
 if __name__ == "__main__":
@@ -102,6 +102,6 @@ if __name__ == "__main__":
         [.0, 1.],
     ])
     R = np.array([[10.]])
-    # print(get_lqr_gains(A, B, Q, R))
+    print(get_lqr_gains(A, B, Q, R))
 
 
