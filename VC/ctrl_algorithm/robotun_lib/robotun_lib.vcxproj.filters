@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{1ff1605c-b6d7-46a4-a4e6-740343efe733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{d6eb70f4-13a4-4859-b836-0af3be747e01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third">
+      <UniqueIdentifier>{6118a781-eddc-490b-9087-b63bc5cf042b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ctrl">
+      <UniqueIdentifier>{6de8dc30-5051-45d5-9a71-304da9849ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\model">
+      <UniqueIdentifier>{f616a6aa-737a-44a1-9784-3af1b0ff600e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ode">
+      <UniqueIdentifier>{00834c79-f784-4842-a2c5-6fe861c350db}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\pid_ctrl.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ctrl\pid_ctrl.cpp">
+      <Filter>src\ctrl</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

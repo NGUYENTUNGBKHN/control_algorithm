@@ -3,6 +3,8 @@
 #include <tuple>
 
 int main() {
+
+    std::cout << "hello\n"; 
     using namespace matplot;
 
     std::vector<std::vector<double>> X = {randn(50, 0, 1), randn(50, 0, 1),
