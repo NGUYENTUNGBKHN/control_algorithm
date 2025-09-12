@@ -1,18 +1,71 @@
 #include <cmath>
 #include <matplot/matplot.h>
+#include <dc.h>
+#include <pid_ctrl.h>
+#include <ode.h>
+
+std::vector<double> u_log;
+
+DC dc = DC();
+pid_ctrl velocity_pid = pid_ctrl(20.0, -0.1, 0.1, 0.0);
+pid_ctrl position_pid = pid_ctrl(2.0, 0.0, 0.0, 1.0);
+
+std::vector<double> derivative(std::vector<double> state, int step, double t, double dt)
+{
+    std::vector<double> result;
+    double w = state[0];
+    double theta = state[1];
+
+    double w_target = position_pid.get_ctrl(theta, dt);
+	velocity_pid.set_target(w_target);
+    double U = velocity_pid.get_ctrl(w, dt);
+
+
+    U = U > 12.0 ? 12.0 : U;
+	U = U < -12.0 ? -12.0 : U;
+	u_log.push_back(U);
+
+	return { dc.get_dw(U, w), w };
+}
 
 int main() {
     using namespace matplot;
-    std::vector<double> x = linspace(0, 2 * pi);
-    std::vector<double> y = transform(x, [](auto x) { return sin(x); });
 
-    plot(x, y, "-o");
+    std::vector<double> times = linspace(0, 5, 5000);
+    ODE ode = ODE({ 0.0, 0.0 }, times, derivative);
+
+    std::vector<std::vector<double>> solution = ode.solve();
+
+    // Extract the state variables from the solution
+    std::vector<double> w_solution;
+    std::vector<double> theta_solution;
+	std::vector<double> u_solution;
+    for (const auto& state : solution) {
+        if (state.size() >= 2) {
+            w_solution.push_back(state[0]);
+            theta_solution.push_back(state[1]);
+        }
+    }
+
+    for (int i = 0; i < u_log.size(); i += 4)
+    {
+		u_solution.push_back(u_log[i]);
+    }
+
+    // Now plot the extracted data
+    line_handle ph1 = plot(times, w_solution);
     hold(on);
-    plot(x, transform(y, [](auto y) { return -y; }), "--xr");
-    plot(x, transform(x, [](auto x) { return x / pi - 1.; }), "-:gs");
-    plot({ 1.0, 0.7, 0.4, 0.0, -0.4, -0.7, -1 }, "k");
+    line_handle ph2 = plot(times, theta_solution);
+    line_handle ph3 = plot(times, u_solution);
 
+    // Create a vector of handles for the legend
+    std::vector<matplot::axes_object_handle> lines = { ph1, ph2, ph3 };
+
+    legend(lines, std::vector<std::string>{"w", "ƒ¦", "U"});
+	
+    grid(true); // Changed to true for boolean
     show();
+
     return 0;
 }
 

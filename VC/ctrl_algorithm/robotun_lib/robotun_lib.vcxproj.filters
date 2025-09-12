@@ -24,10 +24,22 @@
     <ClInclude Include="inc\pid_ctrl.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="inc\dc.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ode.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ctrl\pid_ctrl.cpp">
       <Filter>src\ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model\dc.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ode\ode.cpp">
+      <Filter>src\ode</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

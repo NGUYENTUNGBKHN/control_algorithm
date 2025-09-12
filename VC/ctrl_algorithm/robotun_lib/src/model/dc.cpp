@@ -1,8 +1,19 @@
+/******************************************************************************/
+/*! @addtogroup Group2
+    @file       dc.cpp
+    @brief      
+    @date       2025/09/12
+    @author     Development Dept at Tokyo (nguyen-thanh-tung@jcm-hq.co.jp)
+    @par        Revision
+    $Id$
+    @par        Copyright (C)
+    Japan CashMachine Co, Limited. All rights reserved.
+******************************************************************************/
+
 /*******************************************************************************
 **                                INCLUDES
 *******************************************************************************/
-#include "pid_ctrl.h"
-
+#include "dc.h"
 /*******************************************************************************
 **                       INTERNAL MACRO DEFINITIONS
 *******************************************************************************/
@@ -26,53 +37,49 @@
 /*******************************************************************************
 **                          FUNCTION DEFINITIONS
 *******************************************************************************/
-
-
-pid_ctrl::pid_ctrl(double Kp_, double Ki_, double Kd_, double target_, double last_state_)
+/**
+ * @brief : DC simulation
+ *      Equation of the motor:
+ *          U = L * i' + R * i + k * w
+ *          J = * w' + B * w = k * i - T1
+ *          => w' = - w*(B + k_e * k_t/R)/J + k_t * U/(R * J)
+ *      Where:
+ *          U - Input volage
+ *          L - Rotor indutance
+ *          R - Rotor resistance
+ *          J - Rotor moment of inertia
+ *          B - Rotor friction
+ *          T1 - external load torque
+ * 
+ *          k_e - back EMF constant, k_e * w - back EMF
+ *          k_t - torque constant
+ *      T1 = r * m * a = r^2 * w' * m, when r - shaft radius, m - load mass
+ */         
+DC::DC(double L_, double R_, double J_, double B_, double k_e_, double k_t_)
 {
-    Kp = Kp_;
-    Ki = Ki_;
-    Kd = Kd_;
-    target = target_;
-    last_state = last_state_;
-    integral_eror = 0;
+    L = L_;
+    R = R_;
+    J = J_;
+    B = B_;
+    k_e = k_e_;
+    k_t = k_t_;
 }
 
-pid_ctrl::~pid_ctrl()
+DC::~DC()
 {
 
 }
 
-/******************************************************************************/
-/*! @addtogroup Group2
-    @brief      
-
-    @param value 
-    @param dt 
-    @return float 
-******************************************************************************/
-double pid_ctrl::get_ctrl(double value, double dt)
+double DC::get_dw(double U, double w)
 {
-    double error = target - value;
+    double result = 0;
 
-    double derivative = -(value - last_state) * dt;
+    result = -w*(B + k_e * k_t/R)/J + k_t * U / R / J;
 
-    integral_eror += error * dt;
-    last_state = value;
-
-	return Kp * error + Ki * integral_eror + Kd * derivative;
-}
-
-/******************************************************************************/
-/*! @addtogroup Group2
-    @brief      
-    
-    @param target_ 
-******************************************************************************/
-void pid_ctrl::set_target(double target_)
-{
-    target = target_;
+    return (result);
 }
 
 /******************************** End of file *********************************/
+
+
 

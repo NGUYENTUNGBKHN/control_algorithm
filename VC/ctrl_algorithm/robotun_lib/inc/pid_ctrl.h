@@ -3,15 +3,16 @@
 class pid_ctrl
 {
 public:
-    pid_ctrl(float Kp_, float Ki_, float Kd_, float target_, float init_state_ = 0);
+    pid_ctrl(double Kp_, double Ki_, double Kd_, double target_, double last_state_ = 0);
     ~pid_ctrl();
 
-    float get_ctrl(float value, float dt);
-    void set_target(float target);
+    double get_ctrl(double value, double dt);
+    void set_target(double target_);
 private:
-    float Kp, Ki, Kd;
-    float target;
-    float init_state;
+    double Kp, Ki, Kd;
+    double target;
+    double last_state;
+    double integral_eror;
 protected:
 };
 
