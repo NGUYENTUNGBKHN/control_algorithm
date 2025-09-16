@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
-from robotun_lib.model.dc.dc import DC, get2_a_b, get_lqr_gains
+from robotun_lib.model.dc import DC, get2_a_b, get_lqr_gains
 from robotun_lib.ode.ode_solver import ODE, ODE_TYPE
 
 u_log = []

@@ -1,14 +1,14 @@
 #include <cmath>
 #include <matplot/matplot.h>
-#include <dc.h>
-#include <pid_ctrl.h>
+#include <model.h>
+#include <ctrl.h>
 #include <ode.h>
 
 std::vector<double> u_log;
 
-DC dc = DC();
-pid_ctrl velocity_pid = pid_ctrl(20.0, -0.1, 0.1, 0.0);
-pid_ctrl position_pid = pid_ctrl(2.0, 0.0, 0.0, 1.0);
+robotun::model::DC dc = robotun::model::DC();
+robotun::ctrl::pid_ctrl velocity_pid = robotun::ctrl::pid_ctrl(20.0, -0.1, 0.1, 0.0);
+robotun::ctrl::pid_ctrl position_pid = robotun::ctrl::pid_ctrl(2.0, 0.0, 0.0, 1.0);
 
 std::vector<double> derivative(std::vector<double> state, int step, double t, double dt)
 {
@@ -32,7 +32,7 @@ int main() {
     using namespace matplot;
 
     std::vector<double> times = linspace(0, 5, 5000);
-    ODE ode = ODE({ 0.0, 0.0 }, times, derivative);
+    robotun::ODE ode = robotun::ODE({ 0.0, 0.0 }, times, derivative);
 
     std::vector<std::vector<double>> solution = ode.solve();
 
@@ -61,7 +61,7 @@ int main() {
     // Create a vector of handles for the legend
     std::vector<matplot::axes_object_handle> lines = { ph1, ph2, ph3 };
 
-    legend(lines, std::vector<std::string>{"w", "ƒ¦", "U"});
+    legend(lines, std::vector<std::string>{"w", "theta", "U"});
 	
     grid(true); // Changed to true for boolean
     show();

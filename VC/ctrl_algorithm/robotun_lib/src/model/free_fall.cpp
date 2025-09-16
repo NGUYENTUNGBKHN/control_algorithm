@@ -1,19 +1,18 @@
 /******************************************************************************/
 /*! @addtogroup Group2
-    @file       dc.cpp
+    @file       free_fall.cpp
     @brief      
-    @date       2025/09/12
+    @date       2025/09/16
     @author     Development Dept at Tokyo (nguyen-thanh-tung@jcm-hq.co.jp)
     @par        Revision
     $Id$
     @par        Copyright (C)
     Japan CashMachine Co, Limited. All rights reserved.
 ******************************************************************************/
-
 /*******************************************************************************
 **                                INCLUDES
 *******************************************************************************/
-#include "model.h"
+#include <model.h>
 /*******************************************************************************
 **                       INTERNAL MACRO DEFINITIONS
 *******************************************************************************/
@@ -37,54 +36,56 @@
 /*******************************************************************************
 **                          FUNCTION DEFINITIONS
 *******************************************************************************/
+
 namespace robotun
-{
+{   
     namespace model
     {
-        /**
-         * @brief : DC simulation
-         *      Equation of the motor:
-         *          U = L * i' + R * i + k * w
-         *          J = * w' + B * w = k * i - T1
-         *          => w' = - w*(B + k_e * k_t/R)/J + k_t * U/(R * J)
-         *      Where:
-         *          U - Input volage
-         *          L - Rotor indutance
-         *          R - Rotor resistance
-         *          J - Rotor moment of inertia
-         *          B - Rotor friction
-         *          T1 - external load torque
-         * 
-         *          k_e - back EMF constant, k_e * w - back EMF
-         *          k_t - torque constant
-         *      T1 = r * m * a = r^2 * w' * m, when r - shaft radius, m - load mass
-         */         
-        DC::DC(double L_, double R_, double J_, double B_, double k_e_, double k_t_)
+        free_fall::free_fall(double M_,
+                        double m_,
+                        double r_ ,
+                        double l_,
+                        double g_,
+                        double b1_ ,
+                        double b2_ )
         {
-            L = L_;
-            R = R_;
-            J = J_;
-            B = B_;
-            k_e = k_e_;
-            k_t = k_t_;
+            M = M_; 
+            m = m_;
+            r = r_; 
+            l = l_;
+            g = g_;
+            b1 = b1_; 
+            b2 = b2_;
+            I = 0.5 * M * r;
+        }
+        
+        free_fall::~free_fall()
+        {
         }
 
-        DC::~DC()
+        std::vector<double> free_fall::get_delta2(std::vector<double> state, double u)
         {
+			//std::vector<double> result = { 0.0, 0.0 };
 
+			double dth = state[0], th = state[1], dphi = state[2], phi = state[3];
+			double s = sin(th), c = cos(th);
+
+            double _dphi = (m * r * (l * pow(dth, 2) * s + b1 * dth * c - g * s * c) - b2 * dphi + u)/(I + m * pow(r, 2) * pow(s, 2));
+            double _dth = (g * s - r * _dphi * c - b1 * dth) / l;
+
+			return { _dphi, _dth };
         }
-
-        double DC::get_dw(double U, double w)
-        {
-            double result = 0;
-
-            result = -w*(B + k_e * k_t/R)/J + k_t * U / R / J;
-
-            return (result);
-        }
+        
     } // namespace model
-} /* end namespace robotun */
-/******************************** End of file *********************************/
+    
+} // namespace robotun
 
+
+
+
+
+
+
+/******************************** End of file *********************************/
 
 

@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from robotun_lib.ode.ode_solver import ODE, ODE_TYPE
-from robotun_lib.model.dc.dc import DC
-from robotun_lib.ctrl.pid_ctrl.pid_ctrl import pid_ctrl
+from robotun_lib.model.dc import DC
+from robotun_lib.ctrl.pid_ctrl import pid_ctrl
 
 u_log = []
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 **                                INCLUDES
 *******************************************************************************/
-#include "pid_ctrl.h"
+#include "ctrl.h"
 
 /*******************************************************************************
 **                       INTERNAL MACRO DEFINITIONS
@@ -27,51 +27,56 @@
 **                          FUNCTION DEFINITIONS
 *******************************************************************************/
 
-
-pid_ctrl::pid_ctrl(double Kp_, double Ki_, double Kd_, double target_, double last_state_)
+namespace robotun
 {
-    Kp = Kp_;
-    Ki = Ki_;
-    Kd = Kd_;
-    target = target_;
-    last_state = last_state_;
-    integral_eror = 0;
-}
+    namespace ctrl
+    {
+        pid_ctrl::pid_ctrl(double Kp_, double Ki_, double Kd_, double target_, double last_state_)
+        {
+            Kp = Kp_;
+            Ki = Ki_;
+            Kd = Kd_;
+            target = target_;
+            last_state = last_state_;
+            integral_eror = 0;
+        }
 
-pid_ctrl::~pid_ctrl()
-{
+        pid_ctrl::~pid_ctrl()
+        {
 
-}
+        }
 
-/******************************************************************************/
-/*! @addtogroup Group2
-    @brief      
+        /******************************************************************************/
+        /*! @addtogroup Group2
+            @brief      
 
-    @param value 
-    @param dt 
-    @return float 
-******************************************************************************/
-double pid_ctrl::get_ctrl(double value, double dt)
-{
-    double error = target - value;
+            @param value 
+            @param dt 
+            @return float 
+        ******************************************************************************/
+        double pid_ctrl::get_ctrl(double value, double dt)
+        {
+            double error = target - value;
 
-    double derivative = -(value - last_state) * dt;
+            double derivative = -(value - last_state) * dt;
 
-    integral_eror += error * dt;
-    last_state = value;
+            integral_eror += error * dt;
+            last_state = value;
 
-	return Kp * error + Ki * integral_eror + Kd * derivative;
-}
+            return Kp * error + Ki * integral_eror + Kd * derivative;
+        }
 
-/******************************************************************************/
-/*! @addtogroup Group2
-    @brief      
-    
-    @param target_ 
-******************************************************************************/
-void pid_ctrl::set_target(double target_)
-{
-    target = target_;
+        /******************************************************************************/
+        /*! @addtogroup Group2
+            @brief      
+            
+            @param target_ 
+        ******************************************************************************/
+        void pid_ctrl::set_target(double target_)
+        {
+            target = target_;
+        }
+    }
 }
 
 /******************************** End of file *********************************/

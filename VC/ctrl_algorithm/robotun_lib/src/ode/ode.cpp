@@ -38,6 +38,8 @@
 **                          FUNCTION DEFINITIONS
 *******************************************************************************/
 
+namespace robotun
+{
 ODE::ODE(std::vector<double> state_,
 	std::vector<double> times_,
 	derivative_t derivative_,
@@ -115,6 +117,7 @@ std::vector<std::vector<double>> ODE::solve()
 	states.erase(states.begin());
 	return states;
 }
+}   /* end namespace robotun */
 
 
 /******************************** End of file *********************************/

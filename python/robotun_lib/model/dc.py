@@ -3,7 +3,7 @@ import numpy as np
 
 from numpy.linalg import matrix_rank
 from control import ctrb, obsv
-from robotun_lib.ctrl.lqr_ctrl.lqr_ctrl import lqr
+from robotun_lib.ctrl.lqr_ctrl import lqr
 
 class DC():
     """
