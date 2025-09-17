@@ -7,6 +7,7 @@ import numpy as np
 class ODE_TYPE(Enum):
     EULER = 1
     RK4 = 2
+    RK4_CTRL = 3
 
 class ODE():
     def __init__(self,              # pointer      
@@ -51,9 +52,25 @@ class ODE():
         k4 = derivative_func([v + k3_ * dt for v, k3_ in zip(state, k3)], step, t + dt /2, dt)
         return [v + ( k1_ + 2*k2_ + 2*k3_ + k4_)*dt/6 for v, k1_, k2_, k3_, k4_ in zip(state, k1, k2, k3, k4)]
     
+    def integrate_rk4_ctrl(self, state, step, t, dt, derivative_func, ctrl_func):
+        state_ctrl = ctrl_func(state, dt)
+        k1 = derivative_func(state_ctrl, step, t, dt)
+        k2 = derivative_func([v + k1_ * dt/2 for v, k1_ in zip(state_ctrl, k1)], step, t + dt / 2, dt)
+        k3 = derivative_func([v + k2_ * dt/2 for v, k2_ in zip(state_ctrl, k2)], step, t + dt / 2 , dt)
+        k4 = derivative_func([v + k3_ * dt for v, k3_ in zip(state_ctrl, k3)], step, t + dt /2, dt)
+        return [v + ( k1_ + 2*k2_ + 2*k3_ + k4_)*dt/6 for v, k1_, k2_, k3_, k4_ in zip(state_ctrl, k1, k2, k3, k4)]
+
     def solve(self):
         dt = self.times[1] - self.times[0]
         states = [self.state]
         for step, t in enumerate(self.times):
-            states.append(self.integrate_rk4(states[-1], step, t, dt, self.derivative_func))
+            if self.flag == ODE_TYPE.EULER:
+                states.append(self.integrate_euler(states[-1], step, t, dt, self.derivative_func))
+            elif self.flag == ODE_TYPE.RK4:
+                states.append(self.integrate_rk4(states[-1], step, t, dt, self.derivative_func))
+            elif self.flag == ODE_TYPE.RK4_CTRL:
+                states.append(self.integrate_rk4_ctrl(states[-1], step, t, dt, self.derivative_func, self.ctrl_func))
         return np.array(states)
+    
+    def set_ctrl_func(self, ctrl_func):
+        self.ctrl_func = ctrl_func

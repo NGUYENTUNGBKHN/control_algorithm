@@ -33,5 +33,17 @@ class free_fall():
         _dth = (self.g * s - self.r * _dphi * c - self.b1 * dth) / self.l
 
         return [_dphi, _dth]
+    
+    def get_delta2_v(self, state, v: float = 0.0):
+        dth, th = state 
+
+        s = np.sin(th)
+        c = np.cos(th)
+
+        _dphi = (self.m * self.r * (self.l * dth ** 2 * s + self.b1 * dth * c - self.g * s * c) - self.b2 * v ) / \
+                (self.I + self.m * self.r ** 2 * s ** 2)
+        _dth = (self.g * s - self.r * _dphi * c - self.b1 * dth) / self.l
+
+        return _dth
 
 

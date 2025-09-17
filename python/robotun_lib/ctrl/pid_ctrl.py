@@ -19,6 +19,10 @@ class pid_ctrl():
 
         derivative = -(value - self.last_state) /dt
         self.integrate_error += error * dt
+        # if self.integrate_error > (300/dt):
+        #     self.integrate_error = 300/dt
+        # elif self.integrate_error < (-300/dt):
+        #     self.integrate_error = -300/dt
         self.last_state = value
 
         return (self.Kp * error + self.Ki * self.integrate_error + self.Kd * derivative)
