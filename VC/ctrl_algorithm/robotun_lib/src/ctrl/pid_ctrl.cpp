@@ -58,7 +58,7 @@ namespace robotun
         {
             double error = target - value;
 
-            double derivative = -(value - last_state) * dt;
+            double derivative = -(value - last_state) / dt;
 
             integral_eror += error * dt;
             last_state = value;

@@ -23,9 +23,10 @@ namespace robotun
 		class free_fall
 		{
 		private:
+			
+		public:
 			/* data */
 			double M, m, r, l, g, b1, b2, I;
-		public:
 			free_fall(double M_ = 0.25,
 					double m_ = 0.3,
 					double r_ = 0.25,

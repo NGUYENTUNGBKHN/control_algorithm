@@ -45,6 +45,22 @@ std::vector<double> u_log;
 **                          FUNCTION DEFINITIONS
 *******************************************************************************/
 
+auto fig = matplot::figure(true);
+matplot::axes_handle ax_;
+matplot::line_handle line_;
+
+void circle(double x, double y, double r)
+{
+	using namespace matplot;
+	std::vector<double> theta = linspace(0, 2 * pi);
+	std::vector<double> cx =
+		transform(theta, [=](auto theta) { return r * cos(theta) + x; });
+	std::vector<double> cy =
+		transform(theta, [=](auto theta) { return r * sin(theta) + y; });
+    line_ = ax_->plot(cx, cy);
+}
+
+
 std::vector<double> derivative(std::vector<double> state, int step, double t, double dt)
 {
 	std::vector<double> delta2;
@@ -69,7 +85,7 @@ int main() {
     using namespace matplot;
 
     std::vector<double> times = linspace(0, 10, 500);
-    robotun::ODE ode = robotun::ODE({ 0.0, pi/12, 0.0, 0.0 }, times, derivative);
+    robotun::ODE ode = robotun::ODE({ 0.0, pi/3, 0.0, 0.0 }, times, derivative);
     std::cout << "start\n";
     std::vector<std::vector<double>> solution = ode.solve();
 
@@ -90,17 +106,52 @@ int main() {
         u_solution.push_back(u_log[i]);
     }
 
-    // Now plot the extracted data
-    line_handle ph1 = plot(times, phi_solution);
-    line_handle ph2 = plot(times, u_solution);
+	auto spot_r = 0.7 * ff_model.r;
+    std::vector<double> wheel_x(phi_solution.size());
 
+	std::vector<double> wheel_spot_x(phi_solution.size());
+	std::vector<double> wheel_spot_y(phi_solution.size());
 
-    // Create a vector of handles for the legend
-    std::vector<matplot::axes_object_handle> lines = { ph1};
+    for (int i = 0; i < phi_solution.size(); i++)
+    {
+        wheel_x[i] = phi_solution[i] * ff_model.r;
+    }
+    for (int i = 0; i < phi_solution.size(); i++)
+    {
+        wheel_spot_x[i] = wheel_x[i] + spot_r*cos(phi_solution[i] - pi/2);
+        wheel_spot_y[i] = ff_model.r - spot_r * sin(phi_solution[i] - pi / 2);
+    }
 
-    //legend(lines, std::vector<std::string>{"theta", "phi", "w", "u"});
+    std::vector<double> mass_x(theta_solution.size());
+    std::vector<double> mass_y(theta_solution.size());
 
-    grid(true); // Changed to true for boolean
+    for (int i = 0; i < theta_solution.size(); i++)
+    {
+		mass_x[i] = wheel_x[i] + ff_model.l * cos(theta_solution[i] - pi/2);
+		mass_y[i] = ff_model.r - ff_model.l * sin(theta_solution[i] - pi/2);
+    }
+	
+    ax_ = fig->add_subplot(1, 1, 1);
+    ax_->xlim({ -10, 10 });
+    ax_->ylim({ -5, 5 });
+    ax_->axis(equal);
+    ax_->grid();
+    //ax_->axis(auto_scale);
+	//ax_->plot(wheel_x, std::vector<double>(wheel_x.size(), 0.0), "k");
+    //while (1)
+    {
+        for (int i = 0; i < phi_solution.size(); i++)
+        {
+            circle(wheel_x[i], ff_model.r, ff_model.r);
+            ax_->draw();
+            Sleep(10);
+        }
+    }
+    
+	
+    //axis(equal);
+    
+    
     show();
 
     return 0;

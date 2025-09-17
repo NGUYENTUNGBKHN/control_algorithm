@@ -51,60 +51,58 @@ def derivate(state, step, t, dt):
     u_history.append(u)
 
     _dphi, _dth = object.get_delta2(state, u)
-    with open('output.txt', 'a') as f:
-        print(f'{_dphi}, {_dth}, {u}', file=f)
+    
     return [_dth, dth, _dphi, dphi]
 
 
 if __name__ == "__main__":
     times = np.linspace(0, 10, 500)
     ode = ODE([0.0, np.pi/12, 0.0, 0.0], times, derivate, ODE_TYPE.RK4)
-    print("start\n")
     solution = ode.solve()
     theta = solution[:,1]
     w = solution[:,2]
     phi = solution[:,3]
 
-    # wheel_x = phi * object.r
+    wheel_x = phi * object.r
 
-    # spot_r = 0.7 * object.r
-    # wheel_spot_x = wheel_x + spot_r * np.cos(phi - np.pi / 2)
-    # wheel_spot_y = object.r - spot_r * np.sin(phi - np.pi / 2)
+    spot_r = 0.7 * object.r
+    wheel_spot_x = wheel_x + spot_r * np.cos(phi - np.pi / 2)
+    wheel_spot_y = object.r - spot_r * np.sin(phi - np.pi / 2)
 
-    # mass_x = wheel_x + object.l * np.cos(theta - np.pi / 2)
-    # mass_y = object.r - object.l * np.sin(theta - np.pi / 2)
+    mass_x = wheel_x + object.l * np.cos(theta - np.pi / 2)
+    mass_y = object.r - object.l * np.sin(theta - np.pi / 2)
 
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, autoscale_on=False, xlim=(-10, 10), ylim=(-1.5, 1.5))
-    # ax.set_aspect('equal')
-    # ax.grid()
+    fig = plt.figure()
+    ax = fig.add_subplot(111, autoscale_on=False, xlim=(-10, 10), ylim=(-1.5, 1.5))
+    ax.set_aspect('equal')
+    ax.grid()
 
-    # line, = ax.plot([], [], 'k-', lw=2)
-    # wheel = plt.Circle((0.0, object.r), object.r, color='black', fill=False, lw=2)
-    # wheel_spot = plt.Circle((0.0, spot_r), 0.02, color='red')
-    # mass = plt.Circle((0.0, 0.0), 0.1, color='black')
+    line, = ax.plot([], [], 'k-', lw=2)
+    wheel = plt.Circle((0.0, object.r), object.r, color='black', fill=False, lw=2)
+    wheel_spot = plt.Circle((0.0, spot_r), 0.02, color='red')
+    mass = plt.Circle((0.0, 0.0), 0.1, color='black')
 
-    # def init():
-    #     return []
-
-
-    # def animate(i):
-    #     wheel.set_center((wheel_x[i], object.r))
-    #     wheel_spot.set_center((wheel_spot_x[i], wheel_spot_y[i]))
-    #     mass.set_center((mass_x[i], mass_y[i]))
-    #     line.set_data([wheel_x[i], mass_x[i]], [object.r, mass_y[i]])
-    #     patches = [line, ax.add_patch(wheel), ax.add_patch(wheel_spot), ax.add_patch(mass)]
-    #     return patches
+    def init():
+        return []
 
 
-    # ani = animation.FuncAnimation(fig, animate, np.arange(1, len(solution)),
-    #                               interval=25, blit=True, init_func=init)
+    def animate(i):
+        wheel.set_center((wheel_x[i], object.r))
+        wheel_spot.set_center((wheel_spot_x[i], wheel_spot_y[i]))
+        mass.set_center((mass_x[i], mass_y[i]))
+        line.set_data([wheel_x[i], mass_x[i]], [object.r, mass_y[i]])
+        patches = [line, ax.add_patch(wheel), ax.add_patch(wheel_spot), ax.add_patch(mass)]
+        return patches
+
+
+    ani = animation.FuncAnimation(fig, animate, np.arange(1, len(solution)),
+                                  interval=25, blit=True, init_func=init)
 
     # th_line, = plt.plot(times, solution[:-1, 1], label="theta")
-    phi_line, = plt.plot(times, solution[:-1, 3], label="phi")
-    # w_line, = plt.plot(times, solution[:-1, 2], label="w")
-    u_line, = plt.plot(times, u_history[::4], label="u")
-    # plt.legend([ th_line, phi_line, w_line, u_line], ['theta', 'phi', 'w', 'U'])
-    plt.grid(True)
+    # phi_line, = plt.plot(times, solution[:-1, 3], label="phi")
+    # # w_line, = plt.plot(times, solution[:-1, 2], label="w")
+    # u_line, = plt.plot(times, u_history[::4], label="u")
+    # # plt.legend([ th_line, phi_line, w_line, u_line], ['theta', 'phi', 'w', 'U'])
+    # plt.grid(True)
     # plt.show()
     plt.show()
