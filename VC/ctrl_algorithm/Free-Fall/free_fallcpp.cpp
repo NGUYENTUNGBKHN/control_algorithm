@@ -106,48 +106,11 @@ int main() {
         u_solution.push_back(u_log[i]);
     }
 
-	auto spot_r = 0.7 * ff_model.r;
-    std::vector<double> wheel_x(phi_solution.size());
-
-	std::vector<double> wheel_spot_x(phi_solution.size());
-	std::vector<double> wheel_spot_y(phi_solution.size());
-
-    for (int i = 0; i < phi_solution.size(); i++)
-    {
-        wheel_x[i] = phi_solution[i] * ff_model.r;
-    }
-    for (int i = 0; i < phi_solution.size(); i++)
-    {
-        wheel_spot_x[i] = wheel_x[i] + spot_r*cos(phi_solution[i] - pi/2);
-        wheel_spot_y[i] = ff_model.r - spot_r * sin(phi_solution[i] - pi / 2);
-    }
-
-    std::vector<double> mass_x(theta_solution.size());
-    std::vector<double> mass_y(theta_solution.size());
-
-    for (int i = 0; i < theta_solution.size(); i++)
-    {
-		mass_x[i] = wheel_x[i] + ff_model.l * cos(theta_solution[i] - pi/2);
-		mass_y[i] = ff_model.r - ff_model.l * sin(theta_solution[i] - pi/2);
-    }
+    line_handle ph1 = plot(times, theta_solution);
 	
-    ax_ = fig->add_subplot(1, 1, 1);
-    ax_->xlim({ -10, 10 });
-    ax_->ylim({ -5, 5 });
-    ax_->axis(equal);
-    ax_->grid();
-    //ax_->axis(auto_scale);
-	//ax_->plot(wheel_x, std::vector<double>(wheel_x.size(), 0.0), "k");
-    //while (1)
-    {
-        for (int i = 0; i < phi_solution.size(); i++)
-        {
-            circle(wheel_x[i], ff_model.r, ff_model.r);
-            ax_->draw();
-            Sleep(10);
-        }
-    }
-    
+
+    grid(true); // Changed to true for boolean
+    show();
 	
     //axis(equal);
     

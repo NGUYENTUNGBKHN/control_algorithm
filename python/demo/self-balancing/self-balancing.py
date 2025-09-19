@@ -63,52 +63,52 @@ def ctrl_func(state, dt):
     dth, th, dphi, phi = state
 
     u = arduino_theta_pid.get_ctrl(th, dt)
-    u = limit(u, 1000)
+    u = limit(u, 300)
 
     return [dth, th, u, phi]
 
 if __name__ == "__main__":
     times = np.linspace(0, 10, 500)
-    ode = ODE([0.0, np.pi/3, 0.0, 0.0], times, derivate, ODE_TYPE.RK4_CTRL)
+    ode = ODE([0.0, np.pi/4, 0.0, 0.0], times, derivate, ODE_TYPE.RK4_CTRL)
     ode.set_ctrl_func(ctrl_func)
     solution = ode.solve()
     theta = solution[:,1]
     w = solution[:,2]
     phi = solution[:,3]
-    # wheel_x = phi * object.r
+    wheel_x = phi * object.r
 
-    # spot_r = 0.7 * object.r
-    # wheel_spot_x = wheel_x + spot_r * np.cos(phi - np.pi / 2)
-    # wheel_spot_y = object.r - spot_r * np.sin(phi - np.pi / 2)
+    spot_r = 0.7 * object.r
+    wheel_spot_x = wheel_x + spot_r * np.cos(phi - np.pi / 2)
+    wheel_spot_y = object.r - spot_r * np.sin(phi - np.pi / 2)
 
-    # mass_x = wheel_x + object.l * np.cos(theta - np.pi / 2)
-    # mass_y = object.r - object.l * np.sin(theta - np.pi / 2)
+    mass_x = wheel_x + object.l * np.cos(theta - np.pi / 2)
+    mass_y = object.r - object.l * np.sin(theta - np.pi / 2)
 
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, autoscale_on=False, xlim=(-10, 10), ylim=(-1.5, 1.5))
-    # ax.set_aspect('equal')
-    # ax.grid()
+    fig = plt.figure()
+    ax = fig.add_subplot(111, autoscale_on=False, xlim=(-40, 40), ylim=(-1.5, 1.5))
+    ax.set_aspect('equal')
+    ax.grid()
 
-    # line, = ax.plot([], [], 'k-', lw=2)
-    # wheel = plt.Circle((0.0, object.r), object.r, color='black', fill=False, lw=2)
-    # wheel_spot = plt.Circle((0.0, spot_r), 0.02, color='red')
-    # mass = plt.Circle((0.0, 0.0), 0.1, color='black')
+    line, = ax.plot([], [], 'k-', lw=2)
+    wheel = plt.Circle((0.0, object.r), object.r, color='black', fill=False, lw=2)
+    wheel_spot = plt.Circle((0.0, spot_r), 0.02, color='red')
+    mass = plt.Circle((0.0, 0.0), 0.1, color='black')
 
-    # def init():
-    #     return []
-
-
-    # def animate(i):
-    #     wheel.set_center((wheel_x[i], object.r))
-    #     wheel_spot.set_center((wheel_spot_x[i], wheel_spot_y[i]))
-    #     mass.set_center((mass_x[i], mass_y[i]))
-    #     line.set_data([wheel_x[i], mass_x[i]], [object.r, mass_y[i]])
-    #     patches = [line, ax.add_patch(wheel), ax.add_patch(wheel_spot), ax.add_patch(mass)]
-    #     return patches
+    def init():
+        return []
 
 
-    # ani = animation.FuncAnimation(fig, animate, np.arange(1, len(solution)),
-    #                               interval=25, blit=True, init_func=init)
+    def animate(i):
+        wheel.set_center((wheel_x[i], object.r))
+        wheel_spot.set_center((wheel_spot_x[i], wheel_spot_y[i]))
+        mass.set_center((mass_x[i], mass_y[i]))
+        line.set_data([wheel_x[i], mass_x[i]], [object.r, mass_y[i]])
+        patches = [line, ax.add_patch(wheel), ax.add_patch(wheel_spot), ax.add_patch(mass)]
+        return patches
+
+
+    ani = animation.FuncAnimation(fig, animate, np.arange(1, len(solution)),
+                                  interval=25, blit=True, init_func=init)
 
 
     fig2 = plt.figure()
@@ -120,13 +120,14 @@ if __name__ == "__main__":
     ax2.legend([th_line], ['theta'])
     ax2.grid()
 
-    # fig3 = plt.figure()
-    # ax3 = fig3.add_subplot(111, autoscale_on=True)
-    # w_line, = ax3.plot(times, solution[:-1, 2], label="w")
-    # # phi_line, = ax2.plot(times, solution[:-1, 3], label="phi")
-    # # w_line, = ax2.plot(times, solution[:-1, 2], label="w")
-    # # u_line, = plt.plot(times, u_history[::4], label="u")
-    # ax3.legend([th_line], ['w'])
-    # ax3.grid()
+    fig3 = plt.figure()
+    ax3 = fig3.add_subplot(111, autoscale_on=True)
+    w_line, = ax3.plot(times, solution[:-1, 2], label="w")
+    # phi_line, = ax2.plot(times, solution[:-1, 3], label="phi")
+    # w_line, = ax2.plot(times, solution[:-1, 2], label="w")
+    # u_line, = plt.plot(times, u_history[::4], label="u")
+    ax3.legend([th_line], ['w'])
+    ax3.grid()
+
     plt.grid(True)
     plt.show()
